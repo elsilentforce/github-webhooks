@@ -1,5 +1,5 @@
 import { Elysia } from "elysia";
-import { githubRoutes } from "./github/routes";
+import { github } from "./github";
 
 export const appRoutes = new Elysia({ prefix: '/api'})
-  .use(githubRoutes);
+  .use(github);

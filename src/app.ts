@@ -1,5 +1,5 @@
 import { Elysia } from "elysia";
-import { appRoutes } from "./presentation/routes";
+import { appRoutes } from "./modules/routes";
 
 (()=>{
   main();
