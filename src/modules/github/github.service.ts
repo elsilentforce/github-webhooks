@@ -1,6 +1,7 @@
 import { Context, status } from "elysia"
 import { GithubIssuePayload, GithubStarPayload } from "../../interfaces";
 import { github } from ".";
+import { DiscordBot } from "../../utils";
 
 export abstract class GithubService {
   constructor(){}
@@ -25,16 +26,25 @@ export abstract class GithubService {
         break;
     }
 
-    console.log({message});
-    return status(202, { message: "Accepted" });
+    DiscordBot.notify(message)
+      .then(() => status(202, { message: "Accepted" }))
+      .catch(() => status(400, { error: "Error!" }));
   }
 
   static onStar(payload: GithubStarPayload): string{
+    const { action, sender, repository } = payload;
     let message:string = '';
-    const { action, sender, repository, starred_at } = payload;
 
-    if(starred_at){
-      message = `User ${sender.login} ${action} star on ${repository.name} repository`;
+    switch(action){
+      case 'created':
+        message = `⭐ User ${ sender.login } ${ action } star on ${ repository.name } repository ⭐`;
+        break;
+      case 'deleted':
+        message = `🙅‍♀️ User ${ sender.login } ${ action } star on ${ repository.name } repository 🙅‍♀️`;
+        break;
+      default:
+        message = `Unhandled action ${action} for stars.`
+        break;
     }
 
     return message;
